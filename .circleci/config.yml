@@ -1,0 +1,35 @@
+version: 2.1
+
+jobs:
+  generate-sign:
+    docker:
+      - image: cimg/base:2022.11
+    steps:
+      - run: |
+          t=$(date +%s%3N)
+          nonce=$(uuidgen)
+          sign=$(echo -n "$token$t$nonce" | openssl dgst -binary -sha256 -hmac "$secret" | base64)
+          echo "t=$t" >> $BASH_ENV
+          echo "nonce=$nonce" >> $BASH_ENV
+          echo "sign=$sign" >> $BASH_ENV
+
+  bot-action:
+    docker:
+      - image: cimg/base:2022.11
+    steps:
+      - run: |
+          curl -X POST \
+               -H "Content-Type: application/json; charset=utf8" \
+               -H "Authorization: $token" \
+               -H "t: $t" \
+               -H "sign: $sign" \
+               -H "nonce: $nonce" \
+               -d '{"command": "'${{ steps.yaml-data.outputs.data }}'", "paramter": "default", "commandType": "default"}' \
+               "https://api.switch-bot.com/v1.1/devices/${{ secrets.deviceid }}/commands"
+
+workflows:
+  version: 2
+  bot-action:
+    jobs:
+      - generate-sign
+      - bot-action
