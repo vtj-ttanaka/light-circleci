@@ -8,7 +8,7 @@ jobs:
       - run: |
           t=$(date +%s%3N)
           nonce=$(< /proc/sys/kernel/random/uuid)
-          sign=$(echo -n "$token$t$nonce" | openssl dgst -binary -sha256 -hmac "$secret" | base64)
+          sign=$(echo -n "$TOKEN$t$nonce" | openssl dgst -binary -sha256 -hmac "$SECRET" | base64)
           echo "t=$t" >> $BASH_ENV
           echo "nonce=$nonce" >> $BASH_ENV
           echo "sign=$sign" >> $BASH_ENV
@@ -17,15 +17,17 @@ jobs:
     docker:
       - image: cimg/base:2022.11
     steps:
+      - checkout
       - run: |
+          source ./bot.conf
           curl -X POST \
                -H "Content-Type: application/json; charset=utf8" \
-               -H "Authorization: $token" \
+               -H "Authorization: $TOKEN" \
                -H "t: $t" \
                -H "sign: $sign" \
                -H "nonce: $nonce" \
-               -d '{"command": "'${{ steps.yaml-data.outputs.data }}'", "paramter": "default", "commandType": "default"}' \
-               "https://api.switch-bot.com/v1.1/devices/${{ secrets.deviceid }}/commands"
+               -d '{"command": "'$command'", "paramter": "default", "commandType": "default"}' \
+               "https://api.switch-bot.com/v1.1/devices/$DEVICE_ID/commands"
 
 workflows:
   version: 2
