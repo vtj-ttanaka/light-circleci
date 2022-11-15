@@ -10,9 +10,9 @@ jobs:
           t=$(date +%s%3N)
           nonce=$(< /proc/sys/kernel/random/uuid)
           sign=$(echo -n "$TOKEN$t$nonce" | openssl dgst -binary -sha256 -hmac "$SECRET" | base64)
-          echo "export T=$t" >> /tmp/workspace/echo-output
-          echo "export NONCE=$nonce" >> /tmp/workspace/echo-output
-          echo "export SIGN=$sign" >> /tmp/workspace/echo-output
+          echo "export T=$t" >> echo-output
+          echo "export NONCE=$nonce" >> echo-output
+          echo "export SIGN=$sign" >> echo-output
       - persist_to_workspace:
           root: ~/workspace
           paths:
