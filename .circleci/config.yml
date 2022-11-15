@@ -34,4 +34,6 @@ workflows:
   bot-action:
     jobs:
       - generate-sign
-      - bot-action
+      - bot-action:
+          requires:
+            - generate-sign
