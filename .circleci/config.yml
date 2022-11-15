@@ -4,23 +4,29 @@ jobs:
   generate-sign:
     docker:
       - image: cimg/base:2022.11
+    working_directory: ~/workspace
     steps:
       - run: |
           t=$(date +%s%3N)
           nonce=$(< /proc/sys/kernel/random/uuid)
           sign=$(echo -n "$TOKEN$t$nonce" | openssl dgst -binary -sha256 -hmac "$SECRET" | base64)
-          echo "export T=$t" >> $BASH_ENV
-          echo "export NONCE=$nonce" >> $BASH_ENV
-          echo "export SIGN=$sign" >> $BASH_ENV
+          echo "export T=$t" >> /tmp/workspace/echo-output
+          echo "export NONCE=$nonce" >> /tmp/workspace/echo-output
+          echo "export SIGN=$sign" >> /tmp/workspace/echo-output
+      - persist_to_workspace:
+          root: ~/workspace
+          paths:
+            - echo-output
 
   bot-action:
     docker:
       - image: cimg/base:2022.11
+    working_directory: ~/workspace
     steps:
       - checkout
       - run: |
           source ./bot.conf
-          echo $command
+          source ~/workspace/echo-output
           echo curl -X POST \
                -H "Content-Type: application/json; charset=utf8" \
                -H "Authorization: $TOKEN" \
