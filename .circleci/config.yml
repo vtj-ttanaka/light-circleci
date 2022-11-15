@@ -20,7 +20,8 @@ jobs:
       - checkout
       - run: |
           source ./bot.conf
-          curl -X POST \
+          echo $command
+          echo curl -X POST \
                -H "Content-Type: application/json; charset=utf8" \
                -H "Authorization: $TOKEN" \
                -H "t: $T" \
