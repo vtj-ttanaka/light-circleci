@@ -28,7 +28,7 @@ jobs:
           at: ~/workspace
       - run: |
           source ./bot.conf
-          source ~/workspace/echo-output
+          source ./echo-output
           curl -X POST \
                -H "Content-Type: application/json; charset=utf8" \
                -H "Authorization: $TOKEN" \
