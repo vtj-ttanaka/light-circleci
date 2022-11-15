@@ -9,9 +9,9 @@ jobs:
           t=$(date +%s%3N)
           nonce=$(< /proc/sys/kernel/random/uuid)
           sign=$(echo -n "$TOKEN$t$nonce" | openssl dgst -binary -sha256 -hmac "$SECRET" | base64)
-          echo "t=$t" >> $BASH_ENV
-          echo "nonce=$nonce" >> $BASH_ENV
-          echo "sign=$sign" >> $BASH_ENV
+          echo "export T=$t" >> $BASH_ENV
+          echo "export NONCE=$nonce" >> $BASH_ENV
+          echo "export SIGN=$sign" >> $BASH_ENV
 
   bot-action:
     docker:
@@ -23,11 +23,11 @@ jobs:
           curl -X POST \
                -H "Content-Type: application/json; charset=utf8" \
                -H "Authorization: $TOKEN" \
-               -H "t: $t" \
-               -H "sign: $sign" \
-               -H "nonce: $nonce" \
+               -H "t: $T" \
+               -H "sign: $SIGN" \
+               -H "nonce: $NONCE" \
                -d '{"command": "'$command'", "paramter": "default", "commandType": "default"}' \
-               "https://api.switch-bot.com/v1.1/devices/$DEVICE_ID/commands"
+               "https://api.switch-bot.com/v1.1/devices/$BOT_DEVICE_ID/commands"
 
 workflows:
   version: 2
