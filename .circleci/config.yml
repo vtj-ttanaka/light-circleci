@@ -24,7 +24,10 @@ jobs:
     working_directory: ~/workspace
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/workspace
       - run: |
+          ls
           source ./bot.conf
           source ~/workspace/echo-output
           echo curl -X POST \
