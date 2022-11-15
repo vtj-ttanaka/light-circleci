@@ -27,10 +27,9 @@ jobs:
       - attach_workspace:
           at: ~/workspace
       - run: |
-          ls
           source ./bot.conf
           source ~/workspace/echo-output
-          echo curl -X POST \
+          curl -X POST \
                -H "Content-Type: application/json; charset=utf8" \
                -H "Authorization: $TOKEN" \
                -H "t: $T" \
