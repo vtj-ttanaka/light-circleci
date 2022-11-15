@@ -7,7 +7,7 @@ jobs:
     steps:
       - run: |
           t=$(date +%s%3N)
-          nonce=$(uuidgen)
+          nonce=$(< /proc/sys/kernel/random/uuid)
           sign=$(echo -n "$token$t$nonce" | openssl dgst -binary -sha256 -hmac "$secret" | base64)
           echo "t=$t" >> $BASH_ENV
           echo "nonce=$nonce" >> $BASH_ENV
